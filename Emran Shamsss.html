@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KABUL RADO SWISS - Luxury Watches</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #000;
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .container { max-width:1200px; margin:auto; padding:20px; }
+
+  header {
+    display:flex; justify-content:space-between; align-items:center;
+    border-bottom:1px solid #444; padding-bottom:10px;
+  }
+  .brand { font-weight:700; font-size:1.5rem; letter-spacing:2px; }
+  nav { display:flex; gap:30px; }
+  nav a { text-decoration:none; color:#fff; font-weight:600;
+          padding:10px 12px; border-radius:6px; transition:0.3s; }
+  nav a:hover, nav a.active { background:#fff; color:#000; }
+
+  .header-actions { display:flex; gap:15px; }
+  .header-actions input[type="search"] {
+    padding:8px 12px; border-radius:6px; border:none;
+    outline:none; font-size:1rem; background:#222; color:#fff;
+    width:180px;
+  }
+  .header-actions button {
+    background:#fff; color:#000; border:none;
+    font-weight:600; padding:9px 16px; border-radius:6px;
+    cursor:pointer; transition:0.3s;
+  }
+  .header-actions button:hover { background:#ccc; }
+
+  .toggle-mode { margin-left:10px; }
+
+  .watches-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+    margin-top:30px;
+  }
+
+  .watch-card {
+    background:#111; border-radius:12px; overflow:hidden;
+    box-shadow:0 4px 12px rgba(255 255 255 / 0.15);
+    cursor:pointer; transition:transform 0.3s, box-shadow 0.3s;
+  }
+  .watch-card:hover {
+    transform: scale(1.07);
+    box-shadow:0 15px 30px rgba(255 255 255 / 0.25);
+  }
+  .watch-image { width:100%; height:220px; object-fit:contain; background:#000; padding:20px; }
+  .watch-info { padding:15px 20px; }
+  .watch-info h3 { margin-bottom:8px; font-weight:700; }
+  .watch-info p { font-size:0.9rem; line-height:1.3; color:#ccc; }
+
+  /* Modal */
+  .modal {
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.8); justify-content:center; align-items:center;
+    z-index:9999; opacity:0; transition: opacity 0.3s;
+  }
+  .modal.active { display:flex; opacity:1; }
+  .modal-content {
+    background:#111; color:#fff; padding:20px; border-radius:10px;
+    max-width:90%; width:500px; position:relative; text-align:center;
+    max-height:90vh; overflow-y:auto;
+    transform: scale(0.7); transition: transform 0.3s;
+  }
+  .modal.active .modal-content { transform: scale(1); }
+  .modal-content img {
+    width:100%; height:auto; border-radius:10px; margin-bottom:15px;
+  }
+
+  .close-btn { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
+  .modal-content button {
+    margin-top:10px; padding:10px 15px; border:none; border-radius:6px;
+    background:#fff; color:#000; font-weight:600; cursor:pointer; transition:0.3s;
+  }
+  .modal-content button:hover { background:#ccc; }
+
+  footer {
+    margin-top:60px; padding:20px 0; border-top:1px solid #444;
+    text-align:center; font-size:0.9rem; color:#777;
+  }
+
+  @media(max-width:600px){
+    .watch-image { height:180px; padding:10px; }
+  }
+
+</style>
+</head>
+<body>
+
+<header class="container">
+  <div class="brand">KABUL RADO SWISS</div>
+
+  <nav>
+    <a href="#" class="nav-link active" data-page="home">HOME</a>
+    <a href="#" class="nav-link" data-page="rado">RADO</a>
+    <a href="#" class="nav-link" data-page="rolex">ROLEX</a>
+    <a href="#" class="nav-link" data-page="tissot">TISSOT</a>
+  </nav>
+
+  <div class="header-actions">
+    <input type="search" id="search" placeholder="Search watches..." />
+    <button id="feedback-btn">Feedback</button>
+    <button class="toggle-mode">Toggle Mode</button>
+  </div>
+</header>
+
+<main class="container">
+  <div id="watches" class="watches-grid"></div>
+</main>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeBtn">&times;</span>
+    <img id="modal-img" src="" alt="">
+    <h2 id="modal-name"></h2>
+    <p id="modal-details"></p>
+    <p id="modal-price"></p>
+    <button id="add-to-list">Add to List</button>
+    <p>Contact: 0777777777 | Email: <a href="mailto:kabulradoswiss@gmail.com">kabulradoswiss@gmail.com</a></p>
+    <p>Shop: Ansari District, Kabul City Center, Shaping Mall, Shop No. G20, G21</p>
+    <p>Facebook: <a href="https://www.facebook.com/kabulradoswiss" target="_blank">Kabul Rado Swiss</a></p>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 KABUL RADO SWISS. All rights reserved.
+</footer>
+
+<script>
+const watchData = {
+  rado: [
+    { id:"rado1", name:"Rado HyperChrome", img:"1.1.0.1.jpeg", details:"Automatic chronograph, ceramic case.", price:"$3000" },
+    { id:"rado2", name:"Rado Captain Cook", img:"rrrr.jpeg", details:"Vintage diver style, 37mm.", price:"$3200" }
+  ],
+  rolex: [
+    { id:"rolex1", name:"Rolex Submariner", img:"eee.jpeg", details:"Iconic diver, 40mm.", price:"$18500" },
+    { id:"rolex2", name:"Rolex Daytona", img:"www.jpeg", details:"Chronograph, 40mm.", price:"$31200" }
+  ],
+  tissot: [
+    { id:"tissot1", name:"Tissot Le Locle", img:"qqq.jpeg", details:"Classic automatic dress watch, 39mm.", price:"$650" },
+    { id:"tissot2", name:"Tissot PRX", img:"kkk.jpeg", details:"Modern retro style, 40mm.", price:"$750" }
+  ]
+};
+
+const watchesContainer = document.getElementById('watches');
+const navLinks = document.querySelectorAll('.nav-link');
+const searchInput = document.getElementById('search');
+const feedbackBtn = document.getElementById('feedback-btn');
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modal-img');
+const modalName = document.getElementById('modal-name');
+const modalDetails = document.getElementById('modal-details');
+const modalPrice = document.getElementById('modal-price');
+const closeBtn = document.getElementById('closeBtn');
+const addToListBtn = document.getElementById('add-to-list');
+const toggleModeBtn = document.querySelector('.toggle-mode');
+let darkMode = true;
+
+// Render watches
+function renderWatches(category='home', filter=''){
+  watchesContainer.innerHTML='';
+  let watchesToShow=[];
+  if(category==='home') watchesToShow = [...watchData.rado, ...watchData.rolex, ...watchData.tissot];
+  else watchesToShow = watchData[category] || [];
+  if(filter.trim()!==''){
+    const f=filter.toLowerCase();
+    watchesToShow=watchesToShow.filter(w=>w.name.toLowerCase().includes(f)||w.details.toLowerCase().includes(f));
+  }
+  if(watchesToShow.length===0){
+    watchesContainer.innerHTML=`<p style="color:#888; font-size:1.2rem;">No watches found.</p>`;
+    return;
+  }
+  watchesToShow.forEach(w=>{
+    const card=document.createElement('div');
+    card.className='watch-card';
+    card.innerHTML=`
+      <img src="${w.img}" alt="${w.name}" class="watch-image" />
+      <div class="watch-info">
+        <h3>${w.name}</h3>
+        <p>${w.details}</p>
+      </div>
+    `;
+    card.addEventListener('click', ()=>{
+      modal.classList.add('active');
+      modalImg.src=w.img;
+      modalName.textContent=w.name;
+      modalDetails.textContent=w.details;
+      modalPrice.textContent='Price: '+w.price;
+      modal.scrollTop = 0;
+    });
+    watchesContainer.appendChild(card);
+  });
+}
+
+// Navigation
+navLinks.forEach(link=>{
+  link.addEventListener('click', e=>{
+    e.preventDefault();
+    const page = link.getAttribute('data-page');
+    navLinks.forEach(l=>l.classList.remove('active'));
+    link.classList.add('active');
+    searchInput.value='';
+    renderWatches(page);
+  });
+});
+
+// Search
+searchInput.addEventListener('input', e=>{
+  const activeLink = document.querySelector('.nav-link.active');
+  const category = activeLink ? activeLink.getAttribute('data-page') : 'home';
+  renderWatches(category, e.target.value);
+});
+
+// Feedback
+feedbackBtn.addEventListener('click', ()=>{
+  const fb = prompt('Please enter your feedback:');
+  if(fb) alert('Thank you for your feedback!');
+});
+
+// Close modal
+closeBtn.addEventListener('click', ()=>modal.classList.remove('active'));
+window.addEventListener('click', e=>{ if(e.target===modal) modal.classList.remove('active'); });
+
+// Add to list
+addToListBtn.addEventListener('click', ()=>alert('Added to your list!'));
+
+// Toggle dark/light mode
+toggleModeBtn.addEventListener('click', ()=>{
+  if(darkMode){
+    document.body.style.background='#fff';
+    document.body.style.color='#000';
+    darkMode=false;
+  } else {
+    document.body.style.background='#000';
+    document.body.style.color='#fff';
+    darkMode=true;
+  }
+});
+
+// Initial render
+renderWatches('home');
+</script>
+
+</body>
+</html>
